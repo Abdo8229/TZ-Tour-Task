@@ -1,21 +1,31 @@
 package com.abdelrahman.ramadan.tz_.data.tasksdatausecase
 
+import android.annotation.SuppressLint
 import com.abdelrahman.ramadan.tz_.data.pojo.data.GroupedTasks
 import com.abdelrahman.ramadan.tz_.data.pojo.data.TasksResponse
 import com.abdelrahman.ramadan.tz_.data.repo.TasksDataRepoImp
 import com.abdelrahman.ramadan.tz_.utils.DataTaskStats
 import com.abdelrahman.ramadan.tz_.utils.TasksDataUseCaseStats
+import okhttp3.internal.toImmutableList
 import javax.inject.Inject
 
 class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDataRepoImp) {
     private fun iniTHasMap(groupedTasks: MutableList<GroupedTasks>): HashMap<String, List<TasksResponse>> {
         val hashMap = HashMap<String, List<TasksResponse>>()
         groupedTasks.forEach { groupedTasks ->
-            if (groupedTasks.task.size == 1) {
-                hashMap[groupedTasks.task[0].rideId] = groupedTasks.task
-            } else {
-                hashMap[groupedTasks.task[0].rideId] = groupedTasks.task.subList(1, groupedTasks.task.size)
+            groupedTasks.task.forEach {
+                if(hashMap[groupedTasks.mainRideId] == null)
+                    hashMap[groupedTasks.mainRideId] = listOf(it)
+                else
+                    hashMap[groupedTasks.mainRideId] = (hashMap[groupedTasks.mainRideId]?: listOf()).toImmutableList().plus(it)
+
+
             }
+//            if (groupedTasks.task.size == 1) {
+//                hashMap[groupedTasks.task[0].rideId] = groupedTasks.task
+//            } else {
+//                hashMap[groupedTasks.task[0].rideId] = groupedTasks.task.subList(1, groupedTasks.task.size)
+//            }
         }
 
         return hashMap
@@ -40,6 +50,7 @@ class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDa
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun initHeaderList(tasks: List<GroupedTasks>):List<String> {
         val headerList = mutableListOf<String>()
             tasks.forEach {

@@ -31,7 +31,7 @@ class AuthRepoImp @Inject constructor(private val apiService: ApiService) {
                 LoginStats.Success(
                     response.body()!!.user,
                     "Bearer: ${response.body()?.user?.userId}",
-                    cookies ?: ""
+                    cookies
 
                 )
 

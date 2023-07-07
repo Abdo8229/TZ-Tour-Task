@@ -13,8 +13,8 @@ import com.abdelrahman.ramadan.tz_.data.pojo.data.TasksResponse
 class ExpandableListAdapter(
 
 ) : BaseExpandableListAdapter() {
-    lateinit var headers: List<String>
-    lateinit var items: HashMap<String, List<TasksResponse>>
+     var headers: List<String> = emptyList()
+     var items: HashMap<String, List<TasksResponse>> = HashMap()
         fun updateData(headers: List<String>, items: HashMap<String, List<TasksResponse>>) {
             this.headers = headers
             this.items = items
@@ -50,7 +50,7 @@ class ExpandableListAdapter(
         return false
     }
 
-    override fun getGroupView(p0: Int, p1: Boolean, view: View?, viewGroup: ViewGroup?): View {
+    override fun getGroupView(p0: Int, p1: Boolean, p3: View?, viewGroup: ViewGroup?): View {
         val view = LayoutInflater.from(viewGroup?.context)
             .inflate(R.layout.header_list_item, viewGroup, false)
         val rideIdTv: TextView = view.findViewById(R.id.tvRideId_header_list_item)
@@ -63,7 +63,7 @@ class ExpandableListAdapter(
         p0: Int,
         p1: Int,
         p2: Boolean,
-        view: View?,
+        p3: View?,
         viewGroup: ViewGroup?
     ): View {
         val view = LayoutInflater.from(viewGroup?.context)

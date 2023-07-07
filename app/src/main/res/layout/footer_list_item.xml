@@ -18,12 +18,12 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-<!--            <ImageView-->
-<!--                android:layout_margin="2dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_width="80dp"-->
-<!--                android:layout_height="80dp"-->
-<!--                android:src="@drawable/done_footer" />-->
+            <ImageView
+                android:layout_margin="2dp"
+                android:layout_gravity="center"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/done_footer" />
 
             <LinearLayout
                 android:layout_width="match_parent"
