@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TZ-Task</string>
+    <string name="welcom_back_to_tz_tour_app">Welcom back to TZ Tour Task App</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Signin</string>
+    <string name="remember_me">Remember me</string>
+</resources>

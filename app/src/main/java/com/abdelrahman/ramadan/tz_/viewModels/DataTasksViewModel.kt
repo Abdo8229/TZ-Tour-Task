@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abdelrahman.ramadan.tz_.data.repo.AuthRepoImp
 import com.abdelrahman.ramadan.tz_.data.repo.TasksDataRepoImp
-import com.abdelrahman.ramadan.tz_.data.usecase.tasksdatausecase.TasksDataUseCase
+import com.abdelrahman.ramadan.tz_.data.tasksdatausecase.TasksDataUseCase
 import com.abdelrahman.ramadan.tz_.utils.DataTaskStats
 import com.abdelrahman.ramadan.tz_.utils.TasksDataUseCaseStats
 import dagger.hilt.android.lifecycle.HiltViewModel
