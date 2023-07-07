@@ -1,4 +1,4 @@
-package com.abdelrahman.ramadan.tz_.data.usecase.tasksdatausecase
+package com.abdelrahman.ramadan.tz_.data.tasksdatausecase
 
 import com.abdelrahman.ramadan.tz_.data.pojo.data.GroupedTasks
 import com.abdelrahman.ramadan.tz_.data.pojo.data.TasksResponse
@@ -8,13 +8,13 @@ import com.abdelrahman.ramadan.tz_.utils.TasksDataUseCaseStats
 import javax.inject.Inject
 
 class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDataRepoImp) {
-    private fun iniTHasMap(groupedTasks: MutableList<GroupedTasks>): HashMap<TasksResponse, List<TasksResponse>> {
-        val hashMap = HashMap<TasksResponse, List<TasksResponse>>()
+    private fun iniTHasMap(groupedTasks: MutableList<GroupedTasks>): HashMap<String, List<TasksResponse>> {
+        val hashMap = HashMap<String, List<TasksResponse>>()
         groupedTasks.forEach { groupedTasks ->
             if (groupedTasks.task.size == 1) {
-                hashMap[groupedTasks.task[0]] = emptyList()
+                hashMap[groupedTasks.task[0].rideId] = groupedTasks.task
             } else {
-                hashMap[groupedTasks.task[0]] = groupedTasks.task.subList(1, groupedTasks.task.size)
+                hashMap[groupedTasks.task[0].rideId] = groupedTasks.task.subList(1, groupedTasks.task.size)
             }
         }
 
@@ -27,7 +27,7 @@ class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDa
     ): TasksDataUseCaseStats {
         return when (val response = tasksDataRepoImp.getTasks(auth, cookie)) {
             is DataTaskStats.Success -> {
-                TasksDataUseCaseStats.Success(iniTHasMap(response.responseDay.groupedTasks))
+                TasksDataUseCaseStats.Success(initHeaderList(response.responseDay.groupedTasks),iniTHasMap(response.responseDay.groupedTasks))
             }
 
             is DataTaskStats.Error -> {
@@ -38,6 +38,14 @@ class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDa
                 TasksDataUseCaseStats.Loading
             }
         }
+    }
+
+    private fun initHeaderList(tasks: List<GroupedTasks>):List<String> {
+        val headerList = mutableListOf<String>()
+            tasks.forEach {
+                headerList.add( it.task.first().rideId)
+            }
+        return headerList
     }
 
 }
