@@ -2,10 +2,7 @@ package com.abdelrahman.ramadan.tz_.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abdelrahman.ramadan.tz_.data.repo.AuthRepoImp
-import com.abdelrahman.ramadan.tz_.data.repo.TasksDataRepoImp
 import com.abdelrahman.ramadan.tz_.data.tasksdatausecase.TasksDataUseCase
-import com.abdelrahman.ramadan.tz_.utils.DataTaskStats
 import com.abdelrahman.ramadan.tz_.utils.TasksDataUseCaseStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,10 +17,10 @@ class DataTasksViewModel
 constructor(private val useCase: TasksDataUseCase) : ViewModel() {
     private var _mutableDataTasksStateFlow: MutableStateFlow<TasksDataUseCaseStats> =
         MutableStateFlow(TasksDataUseCaseStats.Loading)
-    val TasksDataStatsFlow: StateFlow<TasksDataUseCaseStats> = _mutableDataTasksStateFlow
+    val tasksDataStatsFlow: StateFlow<TasksDataUseCaseStats> = _mutableDataTasksStateFlow
     fun getTasks(auth: String, cookie: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-           when(val response =  useCase.getTasksAsHashMapHeaderAndFooter(auth, cookie)){
+        viewModelScope.launch {
+            when(val response =  useCase.getTasksAsHashMapHeaderAndFooter(auth, cookie)){
                is TasksDataUseCaseStats.Success -> {
                    _mutableDataTasksStateFlow.value = TasksDataUseCaseStats.Success(response.header ,response.hashMap)
                }

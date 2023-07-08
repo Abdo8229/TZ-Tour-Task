@@ -1,19 +1,16 @@
 package com.abdelrahman.ramadan.tz_.ui.home
 
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.abdelrahman.ramadan.tz_.adapters.ExpandableListAdapter
 import com.abdelrahman.ramadan.tz_.data.pojo.SessionManager
 import com.abdelrahman.ramadan.tz_.databinding.ActivityHomeBinding
 import com.abdelrahman.ramadan.tz_.utils.Constant
-import com.abdelrahman.ramadan.tz_.utils.DataTaskStats
 import com.abdelrahman.ramadan.tz_.utils.TasksDataUseCaseStats
 import com.abdelrahman.ramadan.tz_.viewModels.DataTasksViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -32,6 +29,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         checkFromWhereDataCame()
 
+
     }
 
     private fun checkFromWhereDataCame() {
@@ -49,26 +47,28 @@ class HomeActivity : AppCompatActivity() {
         }
 
         viewModel.getTasks(token!!, cookie!!)
-        lifecycleScope.launch {
-            viewModel.TasksDataStatsFlow.collect {
-                when (it) {
-                    is TasksDataUseCaseStats.Success -> {
-                        binding.expandableListViewHome.setAdapter(adapter)
-                        adapter.updateData(it.header,it.hashMap)
-                        binding.progressBarCircularHome.visibility = View.GONE
-                    }
+        lifecycleScope.launch(Dispatchers.Unconfined) {
+            viewModel.tasksDataStatsFlow.collect {
 
-                    is TasksDataUseCaseStats.Error -> {
-                        Snackbar.make(binding.root, it.error, Snackbar.LENGTH_LONG).show()
-                        binding.progressBarCircularHome.visibility = View.GONE
-                    }
+                    when (it) {
+                        is TasksDataUseCaseStats.Success -> {
+                            binding.expandableListViewHome.setAdapter(adapter)
+                            adapter.updateData(it.header, it.hashMap)
+                            binding.progressBarCircularHome.visibility = View.GONE
+                        }
 
-                    is TasksDataUseCaseStats.Loading -> {
-                        binding.progressBarCircularHome.visibility = View.VISIBLE
+                        is TasksDataUseCaseStats.Error -> {
+                            Snackbar.make(binding.root, it.error, Snackbar.LENGTH_LONG).show()
+                            binding.progressBarCircularHome.visibility = View.GONE
+                        }
+
+                        is TasksDataUseCaseStats.Loading -> {
+                            binding.progressBarCircularHome.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
-        }
+
     }
 
     private fun checkInternetConnection(): Boolean {

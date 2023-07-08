@@ -7,6 +7,7 @@ import com.abdelrahman.ramadan.tz_.data.repo.TasksDataRepoImp
 import com.abdelrahman.ramadan.tz_.utils.DataTaskStats
 import com.abdelrahman.ramadan.tz_.utils.TasksDataUseCaseStats
 import okhttp3.internal.toImmutableList
+import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDataRepoImp) {
@@ -14,10 +15,11 @@ class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDa
         val hashMap = HashMap<String, List<TasksResponse>>()
         groupedTasks.forEach { groupedTasks ->
             groupedTasks.task.forEach {
-                if(hashMap[groupedTasks.mainRideId] == null)
+                if (hashMap[groupedTasks.mainRideId] == null)
                     hashMap[groupedTasks.mainRideId] = listOf(it)
                 else
-                    hashMap[groupedTasks.mainRideId] = (hashMap[groupedTasks.mainRideId]?: listOf()).toImmutableList().plus(it)
+                    hashMap[groupedTasks.mainRideId] =
+                        (hashMap[groupedTasks.mainRideId] ?: listOf()).toImmutableList().plus(it)
 
 
             }
@@ -35,27 +37,38 @@ class TasksDataUseCase @Inject constructor(private val tasksDataRepoImp: TasksDa
         auth: String,
         cookie: String
     ): TasksDataUseCaseStats {
-        return when (val response = tasksDataRepoImp.getTasks(auth, cookie)) {
-            is DataTaskStats.Success -> {
-                TasksDataUseCaseStats.Success(initHeaderList(response.responseDay.groupedTasks),iniTHasMap(response.responseDay.groupedTasks))
-            }
+        return try {
+            when (val response = tasksDataRepoImp.getTasks(auth, cookie)) {
+                is DataTaskStats.Success -> {
+                    TasksDataUseCaseStats.Success(
+                        initHeaderList(response.responseDay.groupedTasks),
+                        iniTHasMap(response.responseDay.groupedTasks)
+                    )
+                }
 
-            is DataTaskStats.Error -> {
-                TasksDataUseCaseStats.Error(response.error)
-            }
+                is DataTaskStats.Error -> {
+                    TasksDataUseCaseStats.Error(response.error)
+                }
 
-            is DataTaskStats.Loading -> {
-                TasksDataUseCaseStats.Loading
+                is DataTaskStats.Loading -> {
+                    TasksDataUseCaseStats.Loading
+                }
             }
+        } catch (e: TimeoutException) {
+            TasksDataUseCaseStats.Error("Server response "+e.message.toString())
+        } catch (e: Exception) {
+            TasksDataUseCaseStats.Error(e.message.toString())
         }
+
+
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun initHeaderList(tasks: List<GroupedTasks>):List<String> {
+    private fun initHeaderList(tasks: List<GroupedTasks>): List<String> {
         val headerList = mutableListOf<String>()
-            tasks.forEach {
-                headerList.add( it.task.first().rideId)
-            }
+        tasks.forEach {
+            headerList.add(it.task.first().rideId)
+        }
         return headerList
     }
 

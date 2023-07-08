@@ -30,8 +30,12 @@ object ApiModule {
 //        interceptor: Interceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .callTimeout(30, java.util.concurrent.TimeUnit.MINUTES)
-            .connectTimeout(30, java.util.concurrent.TimeUnit.MINUTES)
+            .callTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+            .connectTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+            .callTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+            .readTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+            .writeTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+            .retryOnConnectionFailure(true)
 //            .addInterceptor(interceptor)
 //            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
 
